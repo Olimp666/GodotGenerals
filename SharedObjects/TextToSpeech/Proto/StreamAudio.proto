@@ -1,0 +1,14 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "SharedObjects.Proto";
+
+service StreamAudioFile{
+  rpc AudioStream ( RequestToStartStream ) returns (stream Audio);
+}
+
+message Audio{
+  bytes part_of_audio_file = 1;
+}
+message RequestToStartStream{
+  int32 id = 1;
+}

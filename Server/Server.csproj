@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0-windows</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Autofac" Version="8.0.0" />
+      <PackageReference Include="CommandLineParser" Version="2.9.1" />
+      <PackageReference Include="DotNetEnv" Version="3.0.0" />
+      <PackageReference Include="LiteNetLib" Version="1.2.0" />
+      <PackageReference Include="NetCoreAudio" Version="2.0.0" />
+      <PackageReference Include="Terminal.Gui" Version="1.17.0" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+        <ProjectReference Include="..\VoiceRecognitionModule\VoiceRecognitionModule.csproj" />
+        <ProjectReference Include="..\VoiceResponseModule\VoiceResponseModule.csproj" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <None Update="GameStatePresets\AirNicknames.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="GameStatePresets\ArtilleryNicknames.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="GameStatePresets\default.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="GameStatePresets\GenericNicknames.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="GameStatePresets\InfantryNicknames.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="GameStatePresets\PlayerBaseNicknames.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Assets\peer-connected.wav">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Assets\peer-disconnected.wav">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update=".env">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+</Project>

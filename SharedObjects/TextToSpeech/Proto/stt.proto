@@ -1,0 +1,24 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "SharedObjects.Proto";
+
+service SpeechToCommand{
+  rpc AudioToText (stream VoiceAudio) returns (Response);
+  rpc TextToCommand ( InputText ) returns (stream DummyCommand);
+}
+
+message VoiceAudio{
+    bytes record_voice = 1;
+}
+message Response{
+    string content = 1;
+}
+
+message InputText{
+    string text = 1;
+}
+
+message DummyCommand{
+    string direction = 1;
+    int32 offset = 2;
+}

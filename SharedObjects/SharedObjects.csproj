@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <LangVersion>12</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Google.Protobuf" Version="3.27.1" />
+      <PackageReference Include="Grpc" Version="2.46.6" />
+      <PackageReference Include="Grpc.Net.Client" Version="2.63.0" />
+      <PackageReference Include="Grpc.Tools" Version="2.64.0">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="LiteNetLib" Version="1.2.0" />
+      <PackageReference Include="NAudio" Version="2.2.1" />
+      <PackageReference Include="NAudio.Core" Version="2.2.1" />
+      <PackageReference Include="NAudio.WinMM" Version="2.2.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="TextToSpeech\VoiceRequestTemplates\Confirmation.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="TextToSpeech\VoiceRequestTemplates\EnemyEngaged.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="TextToSpeech\VoiceRequestTemplates\EnemySpotted.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="TextToSpeech\VoiceRequestTemplates\RandomEvent.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="TextToSpeech\VoiceRequestTemplates\Report.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="TextToSpeech\VoiceRequestTemplates\TaskFinished.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="TextToSpeech\VoiceRequestTemplates\Orders\Move.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+    <ItemGroup>
+        <Protobuf Include="TextToSpeech\Proto\StreamAudio.proto" GrpcServices="Both" />
+        <Protobuf Include="TextToSpeech\Proto\stt.proto" GrpcServices="Both" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="SpeechToText\" />
+    </ItemGroup>
+
+</Project>

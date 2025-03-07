@@ -1,0 +1,60 @@
+[gd_scene load_steps=6 format=3 uid="uid://dyah0r3nn25pi"]
+
+[ext_resource type="Texture2D" uid="uid://c3kbhnc3wyuig" path="res://Assets/hex_grid.png" id="1_k1tm0"]
+[ext_resource type="Script" path="res://Scripts/Client.cs" id="2_kr8he"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_e6dm0"]
+texture = ExtResource("1_k1tm0")
+margins = Vector2i(9, 8)
+separation = Vector2i(18, 0)
+texture_region_size = Vector2i(110, 96)
+0:0/next_alternative_id = 2
+0:0/0 = 0
+0:0/1 = 1
+0:0/1/modulate = Color(0.0862745, 1, 0.443137, 1)
+1:0/0 = 0
+2:0/next_alternative_id = 4
+2:0/0 = 0
+2:0/1 = 1
+2:0/1/modulate = Color(0.113725, 1, 1, 1)
+2:0/2 = 2
+2:0/2/modulate = Color(1, 0.0470588, 1, 1)
+2:0/3 = 3
+2:0/3/modulate = Color(1, 1, 0.0431373, 1)
+
+[sub_resource type="TileSet" id="TileSet_bhrgs"]
+tile_shape = 3
+tile_offset_axis = 1
+tile_size = Vector2i(102, 94)
+sources/0 = SubResource("TileSetAtlasSource_e6dm0")
+
+[sub_resource type="GDScript" id="GDScript_te8it"]
+script/source = "extends TileMap
+
+const main_layer = 0
+const main_atlas_id = 0
+const this_was_great = \"yup\"
+
+func _input(event):
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
+			var global_clicked = event.position
+			var pos_clicked = local_to_map(to_local(global_clicked))
+			print(pos_clicked)
+			var current_atlas_coords = get_cell_atlas_coords(main_layer, pos_clicked)
+			var current_tile_alt = get_cell_alternative_tile(main_layer, pos_clicked)
+			if current_tile_alt > -1:
+				var number_of_alts_for_clicked = tile_set.get_source(main_atlas_id)\\
+						.get_alternative_tiles_count(current_atlas_coords)
+				set_cell(main_layer, pos_clicked, main_atlas_id, current_atlas_coords, 
+						(current_tile_alt + 1) %  number_of_alts_for_clicked)
+"
+
+[node name="TileMap" type="TileMap"]
+position = Vector2(59, 112)
+tile_set = SubResource("TileSet_bhrgs")
+format = 2
+script = SubResource("GDScript_te8it")
+
+[node name="Node" type="Node" parent="."]
+script = ExtResource("2_kr8he")
