@@ -9,6 +9,7 @@ public class InfantryUnit : BaseUnit {
         CanAttack = true;
         HasAbility = false;
         Health = 100;
+        MaxHealth = 100;
         MovementSpeed = 5f;
         AttackSpeed = 1;
         AttackDamage = 20;

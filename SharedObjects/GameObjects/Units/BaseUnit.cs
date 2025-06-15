@@ -8,7 +8,8 @@ namespace SharedObjects.GameObjects.Units;
 public abstract class BaseUnit(int unitId, int playerId, int x, int y, string nickname)
     : INetSerializable {
     public int Health { get; set; }
-    public string Nickname { get; } = nickname;
+    public int MaxHealth { get; set; }
+    public string Nickname { get; set; } = nickname;
     public virtual UnitType Type { get; set; }
     public bool CanMove { get; set; }
     public bool CanAttack { get; set; }
@@ -51,6 +52,7 @@ public abstract class BaseUnit(int unitId, int playerId, int x, int y, string ni
         writer.Put(Health);
         writer.Put(X);
         writer.Put(Y);
+        writer.Put(Nickname);
     }
 
     public virtual void Deserialize(NetDataReader reader) {
@@ -60,5 +62,6 @@ public abstract class BaseUnit(int unitId, int playerId, int x, int y, string ni
         Health = reader.GetInt();
         X = reader.GetInt();
         Y = reader.GetInt();
+        Nickname=reader.GetString();
     }
 }

@@ -10,6 +10,7 @@ public class AirUnit : BaseUnit {
         CanAttack = false;
         HasAbility = true;
         Health = 250;
+        MaxHealth = 250;
         MovementSpeed = 0.5f;
         AttackSpeed = 0;
         AttackDamage = 0;

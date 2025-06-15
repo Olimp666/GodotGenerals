@@ -77,23 +77,23 @@ internal static class Program {
         var networkThread = new Thread(NetworkLoop);
         var broadcastThread = new Thread(BroadcastLoop);
         var consoleThread = new Thread(ConsoleLoop);
-        //var voiceEmitterThread = new Thread(VoiceEmitterLoop);
-        //var voiceRecognitionTask = new Task(VoiceRecognitionLoop);
+        var voiceEmitterThread = new Thread(VoiceEmitterLoop);
+        var voiceRecognitionTask = new Task(VoiceRecognitionLoop);
 
         gameLoopThread.Start();
         networkThread.Start();
         broadcastThread.Start();
         consoleThread.Start();
-        //voiceEmitterThread.Start();
-        //voiceRecognitionTask.Start();
+        voiceEmitterThread.Start();
+        voiceRecognitionTask.Start();
 
 
         gameLoopThread.Join();
         networkThread.Join();
         broadcastThread.Join();
         consoleThread.Join();
-        //voiceEmitterThread.Join();
-        //voiceRecognitionTask.Wait();
+        voiceEmitterThread.Join();
+        voiceRecognitionTask.Wait();
 
         return 0;
     }
@@ -139,7 +139,7 @@ internal static class Program {
 
     private static void VoiceRecognitionLoop() {
         while (true) {
-            // VoiceRecognitionService.Process();
+            //VoiceRecognitionService.Process();
         }
     }
 

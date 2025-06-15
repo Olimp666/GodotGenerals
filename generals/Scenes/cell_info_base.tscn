@@ -1,0 +1,103 @@
+[gd_scene load_steps=10 format=3 uid="uid://dycyecivpsi2d"]
+
+[ext_resource type="Script" path="res://Scripts/TileMap/CellInfoBase.cs" id="1_heyhb"]
+[ext_resource type="Texture2D" uid="uid://i2uj7d6jm5jl" path="res://Assets/UnitIcons/Air.png" id="2_2xjsn"]
+[ext_resource type="Texture2D" uid="uid://bw3dtwpqcmkdh" path="res://Assets/ButtonTextures/MoveButton/Move.png" id="3_273j3"]
+[ext_resource type="Texture2D" uid="uid://cjib62kj3gm2y" path="res://Assets/hpbar_bg.png" id="3_gv1dl"]
+[ext_resource type="Texture2D" uid="uid://csqj14t0yavmp" path="res://Assets/ButtonTextures/MoveButton/MoveToggle.png" id="4_7j8yt"]
+[ext_resource type="Texture2D" uid="uid://bdkta0tmbynpw" path="res://Assets/hpbar_fill.png" id="4_a2u50"]
+[ext_resource type="Texture2D" uid="uid://bxed803tm81js" path="res://Assets/ButtonTextures/MoveButton/MoveHover.png" id="5_p62em"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_i41cs"]
+line_spacing = 3.17
+font_size = 32
+outline_size = 6
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_k2e14"]
+outline_size = 5
+outline_color = Color(0, 0, 0, 1)
+
+[node name="CellInfoBase" type="PanelContainer"]
+offset_right = 284.0
+offset_bottom = 137.0
+script = ExtResource("1_heyhb")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+
+[node name="UnitInfoBase" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="UnitInfo" type="HBoxContainer" parent="MarginContainer/UnitInfoBase"]
+clip_contents = true
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/UnitInfoBase/UnitInfo"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+size_flags_horizontal = 0
+texture = ExtResource("2_2xjsn")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="MarginContainer/UnitInfoBase/UnitInfo"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 41
+text = "Namedddd"
+label_settings = SubResource("LabelSettings_i41cs")
+text_overrun_behavior = 3
+
+[node name="Control" type="Control" parent="MarginContainer/UnitInfoBase"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="HpFill" type="TextureProgressBar" parent="MarginContainer/UnitInfoBase/Control"]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -16.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+value = 50.0
+nine_patch_stretch = true
+texture_under = ExtResource("3_gv1dl")
+texture_progress = ExtResource("4_a2u50")
+
+[node name="HealthLabel" type="Label" parent="MarginContainer/UnitInfoBase/Control"]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -11.0
+offset_bottom = 12.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "250/250"
+label_settings = SubResource("LabelSettings_k2e14")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="UnitCommands" type="HBoxContainer" parent="MarginContainer/UnitInfoBase"]
+layout_mode = 2
+
+[node name="MoveButton" type="TextureButton" parent="MarginContainer/UnitInfoBase/UnitCommands"]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+toggle_mode = true
+texture_normal = ExtResource("3_273j3")
+texture_pressed = ExtResource("4_7j8yt")
+texture_hover = ExtResource("5_p62em")
+ignore_texture_size = true
+stretch_mode = 0

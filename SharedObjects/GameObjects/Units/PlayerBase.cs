@@ -7,6 +7,8 @@ public class PlayerBase : BaseUnit {
         CanMove = false;
         CanAttack = true;
         MovementSpeed = 0;
+        Health = 75;
+        MaxHealth = 75;
         AttackSpeed = 1;
         AttackDamage = 10;
         VisibleRadius = 1;
