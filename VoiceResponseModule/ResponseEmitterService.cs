@@ -13,7 +13,8 @@ using VoiceResponseModule.Backends;
 
 namespace VoiceResponseModule;
 
-public class ResponseEmitterService {
+public class ResponseEmitterService
+{
     private YandexTtSBackend yandexBackend = new();
     private readonly MsEmbeddedTtSBackend msBackend = new();
     public bool IsEmitting { get; set; }
@@ -37,7 +38,8 @@ public class ResponseEmitterService {
 
     public ResponseEmitterService(
         UnitVoiceDatabase database, GameState gameState, int peersAmount, int port
-    ) {
+    )
+    {
         this.database = database;
         VoiceRequestToTextService.gameState = gameState;
 
@@ -46,9 +48,11 @@ public class ResponseEmitterService {
             AddPeer(new VoiceTransmitterData { PlayerId = i, Port = port + 1 + i });
     }
 
-    private void AddPeer(VoiceTransmitterData transmitterData) {
+    private void AddPeer(VoiceTransmitterData transmitterData)
+    {
         var emitter = new VoiceEmitterConnection();
-        var server = new Server {
+        var server = new Server
+        {
             Services = { StreamAudioFile.BindService(emitter) },
             Ports = {
                 new ServerPort(
@@ -61,7 +65,8 @@ public class ResponseEmitterService {
     }
 
     private byte[] PostProduction(
-        byte[] audio, object? args, int offset = 0) {
+        byte[] audio, object? args, int offset = 0)
+    {
         var source = (byte[])audio.Clone();
         var noise1 = (byte[])audio.Clone();
         var noise2 = (byte[])audio.Clone();
@@ -84,7 +89,8 @@ public class ResponseEmitterService {
         return audio;
     }
 
-    private static Wave16ToFloatProvider _to32(byte[] audio) {
+    private static Wave16ToFloatProvider _to32(byte[] audio)
+    {
         return new Wave16ToFloatProvider(
             new RawSourceWaveStream(
                 audio, 0, audio.Length, custom
@@ -92,17 +98,28 @@ public class ResponseEmitterService {
         );
     }
 
-    private void TransmitResponse(VoiceRequest request, byte[] answer) {
-        transmitters[request.PlayerId].addBuffer(answer);
+    private void TransmitResponse(VoiceRequest request, byte[] answer)
+    {
+        try
+        {
+            transmitters[request.PlayerId].addBuffer(answer);
+
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 
-    public async void ProcessNext() {
+    public async void ProcessNext()
+    {
         if (voiceRequests.Count == 0)
             return;
         await ProcessVoiceRequest(voiceRequests.Dequeue());
     }
 
-    private async Task ProcessVoiceRequest(VoiceRequest request) {
+    private async Task ProcessVoiceRequest(VoiceRequest request)
+    {
         string text = VoiceRequestToTextService.RenderVoiceRequest(request);
         Debug.WriteLine(text);
         byte[] voiceAnswer = await msBackend.Synthesize(
