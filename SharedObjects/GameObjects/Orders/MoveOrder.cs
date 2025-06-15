@@ -172,15 +172,16 @@ public class MoveOrder(int destinationCellX = -1, int destinationCellY = -1, int
 
     public void Serialize(NetDataWriter writer)
     {
-        writer.Put(UnitId);
-        writer.Put(destinationCellX);
-        writer.Put(destinationCellY);
-        writer.Put(isPathFound);
-        writer.Put(pathCells.Count);
-        //TODO: collection was modified
-
         lock (_lock)
         {
+            writer.Put(UnitId);
+            writer.Put(destinationCellX);
+            writer.Put(destinationCellY);
+            writer.Put(isPathFound);
+            writer.Put(pathCells.Count);
+            //TODO: collection was modified
+
+
             foreach (HexCell pathCell in pathCells)
             {
                 pathCell.Serialize(writer);
@@ -191,15 +192,18 @@ public class MoveOrder(int destinationCellX = -1, int destinationCellY = -1, int
 
     public void Deserialize(NetDataReader reader)
     {
-        UnitId = reader.GetInt();
-        destinationCellX = reader.GetInt();
-        destinationCellY = reader.GetInt();
-        isPathFound = reader.GetBool();
-        int pathCellsCount = reader.GetInt();
-        pathCells = new Stack<HexCell>();
-        for (int i = 0; i < pathCellsCount; i++)
+        lock (_lock)
         {
-            pathCells.Push(reader.Get(() => new HexCell()));
+            UnitId = reader.GetInt();
+            destinationCellX = reader.GetInt();
+            destinationCellY = reader.GetInt();
+            isPathFound = reader.GetBool();
+            int pathCellsCount = reader.GetInt();
+            pathCells = new Stack<HexCell>();
+            for (int i = 0; i < pathCellsCount; i++)
+            {
+                pathCells.Push(reader.Get(() => new HexCell()));
+            }
         }
     }
 }

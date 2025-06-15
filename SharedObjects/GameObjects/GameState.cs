@@ -77,14 +77,16 @@ public class GameState : INetSerializable {
         unitIdCounter++;
     }
 
-    public void RemoveUnit(BaseUnit unitToRemove) {
-        if (unitToRemove.GetType() == typeof(InfantryUnit)) {
-            InfantryUnits.Remove(unitToRemove as InfantryUnit);
-        }
+    public void RemoveUnit(int unitId) {
+        var infantryForRemoval = InfantryUnits.Where(x => x.UnitId == unitId).ToList();
+        var artilleryForRemoval = ArtilleryUnits.Where(x => x.UnitId == unitId).ToList();
+        var basesForRemoval = PlayerBases.Where(x => x.UnitId == unitId).ToList();
+        var airForRemoval = AirUnits.Where(x => x.UnitId == unitId).ToList();
 
-        if (unitToRemove.GetType() == typeof(ArtilleryUnit)) {
-            ArtilleryUnits.Remove(unitToRemove as ArtilleryUnit);
-        }
+        if(infantryForRemoval.Count>0) InfantryUnits.Remove(infantryForRemoval.First());
+        if(artilleryForRemoval.Count>0) ArtilleryUnits.Remove(artilleryForRemoval.First());
+        if(basesForRemoval.Count>0) PlayerBases.Remove(basesForRemoval.First());
+        if(airForRemoval.Count>0) AirUnits.Remove(airForRemoval.First());
     }
 
     public void AddOrder(IOrder order) {
@@ -116,6 +118,11 @@ public class GameState : INetSerializable {
             if (order.Update(this) == OrderStatus.Finished) {
                 RemoveOrder(order);
             }
+        }
+
+        foreach(var cell in Grid.cells)
+        {
+            cell.ProcessFight(this, timeDelta);
         }
 
         ElapsedGameTime += timeDelta;

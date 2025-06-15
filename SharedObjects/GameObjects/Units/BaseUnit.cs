@@ -1,4 +1,5 @@
-﻿using LiteNetLib.Utils;
+﻿using System;
+using LiteNetLib.Utils;
 using SharedObjects.GameObjects.Orders;
 
 namespace SharedObjects.GameObjects.Units;
@@ -14,6 +15,8 @@ public abstract class BaseUnit(int unitId, int playerId, int x, int y, string ni
     public bool CanMove { get; set; }
     public bool CanAttack { get; set; }
     public bool HasAbility { get; set; }
+    public bool OnCooldown { get; set; } = false;
+    public TimeSpan Elapsed { get; set; }=TimeSpan.Zero;
     public int UnitId { get; set; } = unitId;
     public int PlayerId { get; set; } = playerId;
     public float MovementSpeed { get; set; }
@@ -28,7 +31,7 @@ public abstract class BaseUnit(int unitId, int playerId, int x, int y, string ni
     public void UpdatePosition(HexCell newPosition) {
         X = newPosition.XCoord;
         Y = newPosition.YCoord;
-        newPosition.CellUnitIds.Add(unitId);
+        newPosition.UpdateCellUnit(unitId);
     }
 
     public static BaseUnit CreateUnitByType(

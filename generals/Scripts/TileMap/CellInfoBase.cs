@@ -14,17 +14,22 @@ public partial class CellInfoBase : PanelContainer
         UnitId = id;
 
         Label nameLabel = GetNode<Label>("MarginContainer/UnitInfoBase/UnitInfo/Label");
-        Label healthLabel = GetNode<Label>("MarginContainer/UnitInfoBase/Control/HealthLabel");
-        TextureProgressBar healthbar = GetNode<TextureProgressBar>("MarginContainer/UnitInfoBase/Control/HpFill");
         nameLabel.Text = $"{name}";
-        healthLabel.Text = $"{health}/{maxHealth}";
-        healthbar.Value = (double)health/maxHealth*100;
 
         MoveButton = GetNode<TextureButton>("MarginContainer/UnitInfoBase/UnitCommands/MoveButton");
 
-
+        UpdateHealth(health, maxHealth);
 
         CreateTexture(atlasCoords);
+    }
+
+    public void UpdateHealth(int health, int maxHealth)
+    {
+        TextureProgressBar healthbar = GetNode<TextureProgressBar>("MarginContainer/UnitInfoBase/Control/HpFill");
+        Label healthLabel = GetNode<Label>("MarginContainer/UnitInfoBase/Control/HealthLabel");
+        healthLabel.Text = $"{health}/{maxHealth}";
+        healthbar.Value = (double)health / maxHealth * 100;
+
     }
     private void CreateTexture(List<Vector3I> atlasCoords)
     {

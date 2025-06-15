@@ -12,8 +12,8 @@ public class AirUnit : BaseUnit {
         Health = 250;
         MaxHealth = 250;
         MovementSpeed = 0.5f;
-        AttackSpeed = 0;
-        AttackDamage = 0;
+        AttackSpeed = 3;
+        AttackDamage = 50;
         VisibleRadius = 2;
     }
 

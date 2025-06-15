@@ -175,6 +175,13 @@ public partial class Client : Node
 
             if (registeredUnitIds.Contains(unitId))
             {
+                //Update units HP
+                for (int i = cellInfo.GetChildCount() - 1; i >= 0; i--)
+                {
+                    CellInfoBase cellInfoItem = cellInfo.GetChild<CellInfoBase>(i);
+                    if (cellInfoItem.UnitId == currentUnit.UnitId)
+                        cellInfoItem.UpdateHealth(currentUnit.Health, currentUnit.MaxHealth);
+                }
                 continue;
             }
 
