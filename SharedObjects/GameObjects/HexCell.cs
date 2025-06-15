@@ -1,9 +1,10 @@
-﻿using LiteNetLib.Utils;
+﻿using System.Collections.Generic;
+using LiteNetLib.Utils;
 
 namespace SharedObjects.GameObjects;
 
 public class HexCell(int xCoord = 1, int yCoord = 1) : INetSerializable {
-    public int CellUnitId = -1;
+    public List<int> CellUnitIds = [];
     public int XCoord = xCoord;
     public int YCoord = yCoord;
 
@@ -16,15 +17,19 @@ public class HexCell(int xCoord = 1, int yCoord = 1) : INetSerializable {
     public string Name => $"Координаты {YCoord} {XCoord}";
 
     public void UpdateCellUnit(int unitId) {
-        CellUnitId = unitId;
+        CellUnitIds.Add(unitId);
     }
 
-    public void RemoveCellUnit() {
-        CellUnitId = -1;
+    public void RemoveCellUnit(int unitId) {
+        CellUnitIds.Remove(unitId);
     }
 
     public void Serialize(NetDataWriter writer) {
-        writer.Put(CellUnitId);
+        writer.Put(CellUnitIds.Count);
+        for (int i = 0; i < CellUnitIds.Count; i++)
+        {
+            writer.Put(CellUnitIds[i]);
+        }
         writer.Put(XCoord);
         writer.Put(YCoord);
         writer.Put(g);
@@ -32,7 +37,11 @@ public class HexCell(int xCoord = 1, int yCoord = 1) : INetSerializable {
     }
 
     public void Deserialize(NetDataReader reader) {
-        CellUnitId = reader.GetInt();
+        int cnt = reader.GetInt();
+        for (int i = 0; i < cnt; i++)
+        {
+            CellUnitIds.Add(reader.GetInt());
+        }
         XCoord = reader.GetInt();
         YCoord = reader.GetInt();
         g = reader.GetInt();

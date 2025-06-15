@@ -5,13 +5,13 @@ using System.Collections.Generic;
 public partial class CellInfoBase : PanelContainer
 {
     public Vector2I unitCoords { get; set; }
-    public int unitId { get; set; }
+    public int UnitId { get; set; }
     public TextureButton MoveButton { get; set; }
     public TextureButton.ToggledEventHandler Handler { get; set; }
     public void Setup(Vector2I coords, int health, int maxHealth, int id, List<Vector3I> atlasCoords, string name)
     {
         unitCoords = coords;
-        unitId = id;
+        UnitId = id;
 
         Label nameLabel = GetNode<Label>("MarginContainer/UnitInfoBase/UnitInfo/Label");
         Label healthLabel = GetNode<Label>("MarginContainer/UnitInfoBase/Control/HealthLabel");

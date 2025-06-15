@@ -13,6 +13,7 @@ using System.Net.Sockets;
 using System.Collections.Generic;
 using System.ComponentModel;
 using SharedObjects.GameObjects.Orders;
+using System.Linq;
 
 namespace TileMap;
 public partial class Client : Node
@@ -28,7 +29,7 @@ public partial class Client : Node
     TileMapLayer borderLayer, bgLayer, iconLayer, fogLayer;
     NetworkClient netClient;
 
-    TextureButton? currentActionButton = null;
+    CellInfoBase? currentCellInfoItem = null;
 
     Vector2I? selectedCell = null;
     bool orderMode = false;
@@ -108,11 +109,12 @@ public partial class Client : Node
                 if (X == tileCoords.X && Y == tileCoords.Y)
                     return;
 
+                int unitId = currentCellInfoItem.UnitId;
+
                 orderMode = false;
                 //currentActionButton.ToggleMode = false;
-                currentActionButton = null;
+                currentCellInfoItem = null;
 
-                int unitId = gs.Grid.cells[Y, X].CellUnitId;
                 MoveCommand moveCommand = new MoveCommand()
                 {
                     unitId = unitId,
@@ -144,53 +146,63 @@ public partial class Client : Node
         var cellUnits = new System.Collections.Generic.Dictionary<int, Vector2I>();
 
         //TODO as list
-        int unitId = gs.Grid.cells[Y, X].CellUnitId;
-        if (unitId != -1)
+        List<int> unitIds = gs.Grid.cells[Y, X].CellUnitIds;
+        List<int> registeredUnitIds = [];
+        foreach (var unitId in unitIds)
+        {
             cellUnits[unitId] = selectedCell.Value;
+        }
 
         for (int i = cellInfo.GetChildCount() - 1; i >= 0; i--)
         {
             CellInfoBase cellInfoItem = cellInfo.GetChild<CellInfoBase>(i);
             int cellInfoX = cellInfoItem.unitCoords.X;
             int cellInfoY = cellInfoItem.unitCoords.Y;
-            int cellInfoUnitId = cellInfoItem.unitId;
+            int cellInfoUnitId = cellInfoItem.UnitId;
             if (!cellUnits.ContainsKey(cellInfoUnitId) || !(cellInfoX == X && cellInfoY == Y))
             {
                 cellInfoItem.MoveButton.Toggled -= cellInfoItem.Handler;
                 cellInfoItem.QueueFree();
             }
-            else return;
+            else
+            {
+                registeredUnitIds.Add(cellInfoUnitId);
+            }
         }
-        if (unitId == -1)
-            return;
+        foreach (var unitId in unitIds)
+        {
+            var currentUnit = gs.GetUnitById(unitId);
 
-        var currentUnit = gs.GetUnitById(unitId);
+            if (registeredUnitIds.Contains(unitId))
+            {
+                continue;
+            }
 
-        //Creating a sprite using atlas coordinates
-        List<Vector3I> atlCoords = [
-            new Vector3I(0,currentUnit.PlayerId + 2,0),
+            //Creating a sprite using atlas coordinates
+            List<Vector3I> atlCoords = [
+                new Vector3I(0,currentUnit.PlayerId + 2,0),
             new Vector3I(1,1,0),
             new Vector3I(2,unitTypeMap[currentUnit.Type].X,unitTypeMap[currentUnit.Type].Y),
-        ];
+            ];
 
-        //Initiate a node from a scene
-        var unitInfoScene = GD.Load<PackedScene>("res://Scenes/cell_info_base.tscn");
-        CellInfoBase panel = unitInfoScene.Instantiate<CellInfoBase>();
-        panel.Setup(selectedCell.Value,currentUnit.Health,currentUnit.MaxHealth, unitId, atlCoords, currentUnit.Nickname);
+            //Initiate a node from a scene
+            var unitInfoScene = GD.Load<PackedScene>("res://Scenes/cell_info_base.tscn");
+            CellInfoBase panel = unitInfoScene.Instantiate<CellInfoBase>();
+            panel.Setup(selectedCell.Value, currentUnit.Health, currentUnit.MaxHealth, unitId, atlCoords, currentUnit.Nickname);
 
-        panel.Handler = (bool toggledOn) =>
-        {
-            OnMoveButtonPressed(panel.MoveButton, toggledOn);
-        };
-        panel.MoveButton.Toggled += panel.Handler;
+            panel.Handler = (bool toggledOn) =>
+            {
+                OnMoveButtonPressed(panel, toggledOn);
+            };
+            panel.MoveButton.Toggled += panel.Handler;
 
-        cellInfo.AddChild(panel);
+            cellInfo.AddChild(panel);
+        }
     }
-
-    private void OnMoveButtonPressed(TextureButton btn, bool toggledOn)
+    private void OnMoveButtonPressed(CellInfoBase cellItem, bool toggledOn)
     {
         orderMode = toggledOn;
-        currentActionButton = btn;
+        currentCellInfoItem = cellItem;
     }
 
     private void UpdateGameState(PlayerReceiveUpdatePacket packet)
@@ -207,7 +219,7 @@ public partial class Client : Node
         {
             Vector2I v = new Vector2I(cell.XCoord, cell.YCoord);
 
-            if (cell.CellUnitId == -1)
+            if (cell.CellUnitIds.Count == 0)
             {
                 bgLayer.SetCell(v, 0, new Vector2I(0, 0));
                 if (borderLayer.GetCellTileData(v) == null)
@@ -215,15 +227,40 @@ public partial class Client : Node
                 iconLayer.SetCell(v, sourceId: -1);
                 continue;
             }
-            var currentUnit = gs.GetUnitById(cell.CellUnitId);
 
-            bgLayer.SetCell(v, 0, new Vector2I(currentUnit.PlayerId + 2, 0));
+            Vector2I bgAtlasCoords = new Vector2I(6, 0);
+            Vector2I iconAtlasCoords = new Vector2I(-1, -1);
+            HashSet<int> playerIds = new HashSet<int>();
+            foreach (var unitId in cell.CellUnitIds)
+            {
+                var curUnit = gs.GetUnitById(unitId);
+                iconAtlasCoords = unitTypeMap[curUnit.Type];
+
+                playerIds.Add(curUnit.PlayerId);
+            }
+            if (playerIds.Count == 1)
+            {
+                if (cell.CellUnitIds.Count > 1)
+                {
+                    iconAtlasCoords.X = 5;
+                }
+                bgAtlasCoords.X = playerIds.First() + 2;
+            }
+            if (playerIds.Count == 2)
+                iconAtlasCoords.X = 4;
+
+            bgLayer.SetCell(v, 0, bgAtlasCoords);
             if (borderLayer.GetCellTileData(v) == null)
                 borderLayer.SetCell(v, 1, new Vector2I(1, 0));
-            iconLayer.SetCell(v, 2, unitTypeMap[currentUnit.Type]);
+            iconLayer.SetCell(v, 2, iconAtlasCoords);
 
-            if (currentUnit.PlayerId == netClient.GetClientPlayer().playerId)
-                ClearVision(v, currentUnit.VisibleRadius);
+            foreach (var uniId in cell.CellUnitIds)
+            {
+                var curUnit = gs.GetUnitById(uniId);
+                if (curUnit.PlayerId == netClient.GetClientPlayer().playerId)
+                    ClearVision(v, curUnit.VisibleRadius);
+            }
+
 
         }
     }

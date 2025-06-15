@@ -28,7 +28,7 @@ public abstract class BaseUnit(int unitId, int playerId, int x, int y, string ni
     public void UpdatePosition(HexCell newPosition) {
         X = newPosition.XCoord;
         Y = newPosition.YCoord;
-        newPosition.CellUnitId = unitId;
+        newPosition.CellUnitIds.Add(unitId);
     }
 
     public static BaseUnit CreateUnitByType(
