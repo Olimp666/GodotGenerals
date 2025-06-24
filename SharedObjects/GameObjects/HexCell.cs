@@ -36,61 +36,41 @@ public class HexCell(int xCoord = 1, int yCoord = 1) : INetSerializable
                 else
                     p2Units.Add(curUnit);
             }
-            int p1_j = 0, p2_j = 0;
-            for (int i = 0; p2_j < p2Units.Count && i < p1Units.Count; i++)
-            {
-                var curUnit = p1Units[i];
-                var curEnemy = p2Units[p2_j];
-                if (curUnit.OnCooldown)
-                {
-                    curUnit.Elapsed += timeDelta;
-                    if (curUnit.Elapsed >= TimeSpan.FromSeconds(curUnit.AttackSpeed))
-                    {
-                        curUnit.Elapsed = TimeSpan.Zero;
-                        curUnit.OnCooldown= false;
-                    }
-                }
-                else
-                {
-                    curEnemy.Health -= curUnit.AttackDamage;
-                    curUnit.OnCooldown = true;
-                }
-
-                if (curEnemy.Health <= 0)
-                {
-                    deadUnitsIds.Add(curEnemy.UnitId);
-                    p2_j++;
-                }
-            }
-            for (int i = 0; p1_j < p1Units.Count && i < p2Units.Count; i++)
-            {
-                var curUnit = p2Units[i];
-                var curEnemy = p1Units[p1_j];
-                if (curUnit.OnCooldown)
-                {
-                    curUnit.Elapsed += timeDelta;
-                    if (curUnit.Elapsed >= TimeSpan.FromSeconds(curUnit.AttackSpeed))
-                    {
-                        curUnit.Elapsed = TimeSpan.Zero;
-                        curUnit.OnCooldown = false;
-                    }
-                }
-                else
-                {
-                    curEnemy.Health -= curUnit.AttackDamage;
-                    curUnit.OnCooldown = true;
-                }
-
-                if (curEnemy.Health <= 0)
-                {
-                    deadUnitsIds.Add(curEnemy.UnitId);
-                    p2_j++;
-                }
-            }
+            AttackEnemies(p1Units, p2Units, deadUnitsIds, timeDelta);
             foreach (var deadId in deadUnitsIds)
             {
                 RemoveCellUnit(deadId);
                 gs.RemoveUnit(deadId);
+            }
+        }
+    }
+
+    private void AttackEnemies(List<BaseUnit> allies, List<BaseUnit> enemies, List<int> dead, TimeSpan timeDelta)
+    {
+        int p = 0;
+        for (int i = 0; p < enemies.Count && i < allies.Count; i++)
+        {
+            var curUnit = allies[i];
+            var curEnemy = enemies[p];
+            if (curUnit.OnCooldown)
+            {
+                curUnit.Elapsed += timeDelta;
+                if (curUnit.Elapsed >= TimeSpan.FromSeconds(curUnit.AttackSpeed))
+                {
+                    curUnit.Elapsed = TimeSpan.Zero;
+                    curUnit.OnCooldown = false;
+                }
+            }
+            else
+            {
+                curEnemy.Health -= curUnit.AttackDamage;
+                curUnit.OnCooldown = true;
+            }
+
+            if (curEnemy.Health <= 0)
+            {
+                dead.Add(curEnemy.UnitId);
+                p++;
             }
         }
     }

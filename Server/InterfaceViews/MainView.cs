@@ -20,6 +20,7 @@ public sealed class MainView : View {
 
 
         Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds(500), TerminalUpdate);
+        Application.Top.KeyDown += OnHandleF;
         SwitchToOtherView();
     }
 
